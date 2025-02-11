@@ -53,6 +53,8 @@ class Pokemon:
 
         # This project will be very helpful to me, so it's worth it I guess..!
 
+        # Ignore how bad this code is LOL, it could be fixed in a later update
+
         if Code == 200:
             Data: list = Response.json()
             Evos: list = Data["chain"]
@@ -63,11 +65,13 @@ class Pokemon:
 
             if Evos["evolves_to"] != []:
                 Second: list = str(Evos["evolves_to"][0]["species"]["name"]).capitalize()
-                Responder += f"2. {Second}\n"
+                SLevel: int = str(Evos["evolves_to"][0]["evolution_details"][0]["min_level"])
+                Responder += f"2. {Second} - Level: {SLevel}\n"
 
                 if Evos["evolves_to"][0]["evolves_to"] != []:
                     Third: list = str(Evos["evolves_to"][0]["evolves_to"][0]["species"]["name"]).capitalize()
-                    Responder += f"3. {Third}\n"
+                    TLevel: int = str(Evos["evolves_to"][0]["evolves_to"][0]["evolution_details"][0]["min_level"])
+                    Responder += f"3. {Third} - Level: {TLevel}\n"
 
             return Responder
         
