@@ -1,6 +1,9 @@
 # Pokéfind 🔎
 A basic, interfaceless Python app to find evo/devolutions about a provided Pokémon.
 
+1. Includes an in-case sensitive design, allows for stuff like "PIKAchu"
+2. Tells basic information like what level it evolves at, or what item it requires to evolve
+
 ## Internals 🤓
 1. Uses **3 different endpoints** of the PokéAPI to make shit user friendly 😉
 2. Entirely bugless, which means you can mess up and it won't care! 🤑
@@ -19,3 +22,5 @@ The design may not be ideal, but it's whatever, it does its job. It also handled
 Possibly in the future if I really am bugged by it, I'll add if it requires levels, stones, or specific requirements like trading or whatever.. But for now it'll stay the way it is.
 
 If you want to support me and my work, feel free to star this, or any repository of mine! Stars help me stay motivated and I'll really appreciate ya for it. 💖
+
+**Last Updated: 2/11/2025**
