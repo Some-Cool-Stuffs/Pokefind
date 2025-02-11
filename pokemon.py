@@ -53,27 +53,48 @@ class Pokemon:
 
         # This project will be very helpful to me, so it's worth it I guess..!
 
-        # Ignore how bad this code is LOL, it could be fixed in a later update
-
         if Code == 200:
             Data: list = Response.json()
             Evos: list = Data["chain"]
             Responder: str = ""
 
             First: list = str(Evos["species"]["name"]).capitalize()
-            Responder += f"\n1. {First}\n"
+            Evolver: list = Evos["evolves_to"]
+            Initial_Details: list = Evolver[0]["evolution_details"]
 
-            if Evos["evolves_to"] != []:
-                Second: list = str(Evos["evolves_to"][0]["species"]["name"]).capitalize()
-                SLevel: int = str(Evos["evolves_to"][0]["evolution_details"][0]["min_level"])
-                Responder += f"2. {Second} - Level: {SLevel}\n"
+            # Initial Additional Information
 
-                if Evos["evolves_to"][0]["evolves_to"] != []:
-                    Third: list = str(Evos["evolves_to"][0]["evolves_to"][0]["species"]["name"]).capitalize()
-                    TLevel: int = str(Evos["evolves_to"][0]["evolves_to"][0]["evolution_details"][0]["min_level"])
-                    Responder += f"3. {Third} - Level: {TLevel}\n"
+            Initial_Item: str = str(Initial_Details[0]["item"]).capitalize() if str(Initial_Details[0]["item"]) != None else None
+            
+            Responder += f"\n1. {First} -- Item: {Initial_Item}\n"
+
+            if Evolver != []:
+                Second: list = str(Evolver[0]["species"]["name"]).capitalize()
+                Secondary_Evolver: list = Evolver[0]["evolves_to"]
+                Secondary_Details: list = Evolver[0]["evolution_details"]
+                Item_Data: list = Secondary_Evolver[0]["evolution_details"]
+
+                # Additional Information
+
+                Secondary_Item: str = ""
+                Secondary_Level: str = str(Secondary_Details[0]["min_level"])
+                Secondary_Item_Vocab: list | None = Item_Data[0]["item"]
+
+                if Secondary_Item_Vocab:
+                    Secondary_Item = str(Secondary_Item_Vocab["name"]).replace("-", " ")
+                    Secondary_Item = Secondary_Item.split()
+                    Secondary_Item = f"{Secondary_Item[0].capitalize()} {Secondary_Item[1].capitalize()}"
+
+                Responder += f"2. {Second} -- Level: {Secondary_Level} -- Item: {Secondary_Item if Secondary_Item != "" else None}\n"
+
+                if Secondary_Evolver != []:
+                    Third: list = str(Secondary_Evolver[0]["species"]["name"]).capitalize()
+                    Final_Details: list = Secondary_Evolver[0]["evolution_details"]
+
+                    # Final Information
+
+                    Final_Level: str = str(Final_Details[0]["min_level"])
+
+                    Responder += f"3. {Third} -- Level: {Final_Level}\n"
 
             return Responder
-        
-        else:
-            return Responses.Failure(Message=f"Unknown error, responded using code: {Code}")
