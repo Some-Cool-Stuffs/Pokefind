@@ -23,4 +23,8 @@ Possibly in the future if I really am bugged by it, I'll add if it requires leve
 
 If you want to support me and my work, feel free to star this, or any repository of mine! Stars help me stay motivated and I'll really appreciate ya for it. 💖
 
+---
+
+![Example](https://github.com/user-attachments/assets/165f25ea-38b9-45f4-adb9-1fc382db9543)
+
 **Last Updated: 2/11/2025**
