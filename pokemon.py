@@ -27,7 +27,7 @@ class Pokemon:
     
     def findChainID(ID: str = None) -> int | None:
         if not ID:
-            return Responses.Failure(Message="Tried searching chain ID using invalid Pokedex ID")
+            return Responses.Failure(Message="Tried searching chain ID using invalid Pokédex ID")
 
         Response: object = Request.get(Species + ID)
         Code: int = Response.status_code
