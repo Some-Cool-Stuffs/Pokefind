@@ -27,7 +27,7 @@ class Pokemon:
     
     def findChainID(ID: str = None) -> int | None:
         if not ID:
-            return Responses.Failure(Message="Tried searching chain ID using invalid Pokédex ID")
+            return Responses.Failure(Message="Tried searching chain ID using invalid Pokedex ID")
 
         Response: object = Request.get(Species + ID)
         Code: int = Response.status_code
@@ -103,27 +103,28 @@ class Pokemon:
                 Initial_Item_Statement: str | None = Initial_Item_Arrangement["name"] if Initial_Item_Arrangement != None else None
 
                 Responder += f"{Colors.Style.DIM} 1. {Colors.Style.RESET_ALL}{Initial_Name_Formatted} evolves "
-                Responder += assignMessage(Level=Initial_Level_Statement, Item=Initial_Item_Statement) + "\n"
+                Responder += assignMessage(Level=Initial_Level_Statement, Item=Initial_Item_Statement) + "\n" if Initial_Name != "Eevee" else f"using ~{Colors.Style.BRIGHT}All Stones{Colors.Style.RESET_ALL}"
 
                 Secondary_Data: list = Initial_Data[0]["evolves_to"]
                 Secondary_Name: str = str(Initial_Data[0]["species"]["name"]).capitalize()
 
-                if Secondary_Data != []:
-                    Secondary_Evolution_Data: list = Secondary_Data[0]["evolution_details"]
+                if "eon" not in Secondary_Name.lower():
+                    if Secondary_Data != []:
+                        Secondary_Evolution_Data: list = Secondary_Data[0]["evolution_details"]
 
-                    Secondary_Level_Arrangement: int | None = Secondary_Evolution_Data[0]["min_level"]
-                    Secondary_Item_Arrangement: list | None = Secondary_Evolution_Data[0]["item"]
+                        Secondary_Level_Arrangement: int | None = Secondary_Evolution_Data[0]["min_level"]
+                        Secondary_Item_Arrangement: list | None = Secondary_Evolution_Data[0]["item"]
 
-                    Secondary_Level_Statement: str | None = Secondary_Level_Arrangement if Secondary_Level_Arrangement != None else None
-                    Secondary_Item_Statement: str | None = Secondary_Item_Arrangement["name"] if Secondary_Item_Arrangement != None else None
+                        Secondary_Level_Statement: str | None = Secondary_Level_Arrangement if Secondary_Level_Arrangement != None else None
+                        Secondary_Item_Statement: str | None = Secondary_Item_Arrangement["name"] if Secondary_Item_Arrangement != None else None
 
-                    Responder += f"{Colors.Style.DIM} 2. {Colors.Style.RESET_ALL}{Colors.Style.BRIGHT}{Secondary_Name}{Colors.Style.RESET_ALL} evolves "
-                    Responder += assignMessage(Level=Secondary_Level_Statement, Item=Secondary_Item_Statement) + "\n"
+                        Responder += f"{Colors.Style.DIM} 2. {Colors.Style.RESET_ALL}{Colors.Style.BRIGHT}{Secondary_Name}{Colors.Style.RESET_ALL} evolves "
+                        Responder += assignMessage(Level=Secondary_Level_Statement, Item=Secondary_Item_Statement) + "\n"
 
-                    Responder += f"{Colors.Style.DIM} 3. {Colors.Style.RESET_ALL}{Colors.Style.BRIGHT}{str(Secondary_Data[0]["species"]["name"]).capitalize()}{Colors.Style.RESET_ALL} is {Initial_Name_Formatted}'s final evolution"
+                        Responder += f"{Colors.Style.DIM} 3. {Colors.Style.RESET_ALL}{Colors.Style.BRIGHT}{str(Secondary_Data[0]["species"]["name"]).capitalize()}{Colors.Style.RESET_ALL} is {Initial_Name_Formatted}'s final evolution"
 
-                else:
-                    Responder += f"{Colors.Style.DIM} 2. {Colors.Style.RESET_ALL}{Colors.Style.BRIGHT}{Secondary_Name}{Colors.Style.RESET_ALL} is {Colors.Style.RESET_ALL}{Initial_Name_Formatted}'s final evolution"
+                    else:
+                        Responder += f"{Colors.Style.DIM} 2. {Colors.Style.RESET_ALL}{Colors.Style.BRIGHT}{Secondary_Name}{Colors.Style.RESET_ALL} is {Colors.Style.RESET_ALL}{Initial_Name_Formatted}'s final evolution"
 
             else:
                 Responder += f"{Colors.Style.DIM} 1. {Colors.Style.RESET_ALL}{Initial_Name_Formatted} does not evolve"
