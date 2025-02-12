@@ -12,7 +12,7 @@ Running: bool = True
 # Conditioned looping
 
 while Running:
-    Choice: str = input(f"Evolutions of Pokemon {Colors.Style.DIM}<Name: string>{Colors.Style.RESET_ALL}: ").lower()
+    Choice: str = input(f"Evolutions of Pokémon {Colors.Style.DIM}<Name: string>{Colors.Style.RESET_ALL}: ").lower()
     print()
 
     if Choice == "dip" or Choice == "close":
