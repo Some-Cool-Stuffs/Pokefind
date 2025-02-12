@@ -1,11 +1,11 @@
 import requests as Request;
+import colorama as Colors;
 
 # Variables
 
 Pokedex: str = "https://pokeapi.co/api/v2/pokemon/"
 Species: str = "https://pokeapi.co/api/v2/pokemon-species/"
 Chain  : str = "https://pokeapi.co/api/v2/evolution-chain/"
-
 
 # Classes
 
@@ -14,7 +14,7 @@ from responses import Responses;
 class Pokemon:
     def findID(Name: str = None) -> int | None:
         if not Name:
-            return Responses.Failure(Message="Attempted to find ID of invalid Pokemon")
+            return Responses.Failure(Message="Tried searching ID of unknown Pokémon")
 
         Response: object = Request.get(Pokedex + Name)
         Code: int = Response.status_code
@@ -27,7 +27,7 @@ class Pokemon:
     
     def findChainID(ID: str = None) -> int | None:
         if not ID:
-            return Responses.Failure(Message="Attempted to find chain ID using invalid Pokedex ID")
+            return Responses.Failure(Message="Tried searching chain ID using invalid Pokedex ID")
 
         Response: object = Request.get(Species + ID)
         Code: int = Response.status_code
@@ -43,7 +43,7 @@ class Pokemon:
 
     def findEvolutions(ChainID: int = None) -> str | None:
         if not ChainID:
-            return Responses.Failure(Message="Attempted to find evolutions using an invalid Chain ID")
+            return Responses.Failure(Message="Tried searching evo/devos using invalid Chain ID")
         
         Response: object = Request.get(Chain + str(ChainID))
         Code: int = Response.status_code
@@ -51,50 +51,81 @@ class Pokemon:
         # Someone kill me,
         # I'm going to scrape my friggen eyes out if I have to do this again.
 
+        # UPDATE: I've recoded this like 4 times!
+
         # This project will be very helpful to me, so it's worth it I guess..!
+
+        Responder: str = ""
+        Stones: list = {
+            "Dawn": Colors.Fore.CYAN,
+            "Fire": Colors.Fore.RED,
+            "Dusk": Colors.Fore.MAGENTA,
+            "Ice": Colors.Fore.CYAN,
+            "Leaf": Colors.Fore.GREEN,
+            "Moon": Colors.Fore.LIGHTBLACK_EX,
+            "Oval": Colors.Fore.LIGHTBLACK_EX,
+            "Shiny": Colors.Fore.YELLOW,
+            "Sun": Colors.Fore.RED,
+            "Thunder": Colors.Fore.YELLOW,
+            "Water": Colors.Fore.BLUE
+        }
 
         if Code == 200:
             Data: list = Response.json()
-            Evos: list = Data["chain"]
-            Responder: str = ""
-
-            First: list = str(Evos["species"]["name"]).capitalize()
-            Evolver: list = Evos["evolves_to"]
-            Initial_Details: list = Evolver[0]["evolution_details"]
-
-            # Initial Additional Information
-
-            Initial_Item: str = str(Initial_Details[0]["item"]).capitalize() if str(Initial_Details[0]["item"]) != None else None
+            Evolutions: list = Data["chain"]
             
-            Responder += f"\n1. {First} -- Item: {Initial_Item}\n"
+            Initial_Data: list = Evolutions["evolves_to"]
+            Initial_Name: str = str(Evolutions["species"]["name"]).capitalize()
+            Initial_Name_Formatted: str = Colors.Style.RESET_ALL + Colors.Style.BRIGHT + Initial_Name + Colors.Style.RESET_ALL
 
-            if Evolver != []:
-                Second: list = str(Evolver[0]["species"]["name"]).capitalize()
-                Secondary_Evolver: list = Evolver[0]["evolves_to"]
-                Secondary_Details: list = Evolver[0]["evolution_details"]
-                Item_Data: list = Secondary_Evolver[0]["evolution_details"]
+            def assignMessage(Level, Item):
+                if Level != None:
+                    return f"when LV. {Colors.Fore.YELLOW}{Level}{Colors.Style.RESET_ALL}"
 
-                # Additional Information
+                elif Item != None:
+                    for Stone in Stones:
+                        if str(Item).lower().find(Stone.lower()) != -1:
+                            Formatted: str = str(Item).replace("-", " ").split()
+                            Capitalized: str = [Word.capitalize() for Word in Formatted]
 
-                Secondary_Item: str = ""
-                Secondary_Level: str = str(Secondary_Details[0]["min_level"])
-                Secondary_Item_Vocab: list | None = Item_Data[0]["item"]
+                            return f"using a {Colors.Style.BRIGHT}{Stones[Stone]}{" ".join(Capitalized)}{Colors.Style.RESET_ALL}"
 
-                if Secondary_Item_Vocab:
-                    Secondary_Item = str(Secondary_Item_Vocab["name"]).replace("-", " ")
-                    Secondary_Item = Secondary_Item.split()
-                    Secondary_Item = f"{Secondary_Item[0].capitalize()} {Secondary_Item[1].capitalize()}"
+                else:
+                    return "by reaching high Friendship levels"
 
-                Responder += f"2. {Second} -- Level: {Secondary_Level} -- Item: {Secondary_Item if Secondary_Item != "" else None}\n"
+            if Initial_Data != []:
+                Initial_Evolution_Data: list = Initial_Data[0]["evolution_details"]
 
-                if Secondary_Evolver != []:
-                    Third: list = str(Secondary_Evolver[0]["species"]["name"]).capitalize()
-                    Final_Details: list = Secondary_Evolver[0]["evolution_details"]
+                Initial_Level_Arrangement: int | None = Initial_Evolution_Data[0]["min_level"]
+                Initial_Item_Arrangement: list | None = Initial_Evolution_Data[0]["item"]
 
-                    # Final Information
+                Initial_Level_Statement: str | None = Initial_Level_Arrangement if Initial_Level_Arrangement != None else None
+                Initial_Item_Statement: str | None = Initial_Item_Arrangement["name"] if Initial_Item_Arrangement != None else None
 
-                    Final_Level: str = str(Final_Details[0]["min_level"])
+                Responder += f"{Colors.Style.DIM} 1. {Colors.Style.RESET_ALL}{Initial_Name_Formatted} evolves "
+                Responder += assignMessage(Level=Initial_Level_Statement, Item=Initial_Item_Statement) + "\n"
 
-                    Responder += f"3. {Third} -- Level: {Final_Level}\n"
+                Secondary_Data: list = Initial_Data[0]["evolves_to"]
+                Secondary_Name: str = str(Initial_Data[0]["species"]["name"]).capitalize()
 
-            return Responder
+                if Secondary_Data != []:
+                    Secondary_Evolution_Data: list = Secondary_Data[0]["evolution_details"]
+
+                    Secondary_Level_Arrangement: int | None = Secondary_Evolution_Data[0]["min_level"]
+                    Secondary_Item_Arrangement: list | None = Secondary_Evolution_Data[0]["item"]
+
+                    Secondary_Level_Statement: str | None = Secondary_Level_Arrangement if Secondary_Level_Arrangement != None else None
+                    Secondary_Item_Statement: str | None = Secondary_Item_Arrangement["name"] if Secondary_Item_Arrangement != None else None
+
+                    Responder += f"{Colors.Style.DIM} 2. {Colors.Style.RESET_ALL}{Colors.Style.BRIGHT}{Secondary_Name}{Colors.Style.RESET_ALL} evolves "
+                    Responder += assignMessage(Level=Secondary_Level_Statement, Item=Secondary_Item_Statement) + "\n"
+
+                    Responder += f"{Colors.Style.DIM} 3. {Colors.Style.RESET_ALL}{Colors.Style.BRIGHT}{str(Secondary_Data[0]["species"]["name"]).capitalize()}{Colors.Style.RESET_ALL} is {Initial_Name_Formatted}'s final evolution"
+
+                else:
+                    Responder += f"{Colors.Style.DIM} 2. {Colors.Style.RESET_ALL}{Colors.Style.BRIGHT}{Secondary_Name}{Colors.Style.RESET_ALL} is {Colors.Style.RESET_ALL}{Initial_Name_Formatted}'s final evolution"
+
+            else:
+                Responder += f"{Colors.Style.DIM} 1. {Colors.Style.RESET_ALL}{Initial_Name_Formatted} does not evolve"
+
+            print(Responder)
